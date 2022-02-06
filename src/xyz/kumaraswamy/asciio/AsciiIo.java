@@ -6,7 +6,6 @@ import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.util.Arrays;
 
 public class AsciiIo {
 
@@ -25,7 +24,7 @@ public class AsciiIo {
             throw new IllegalArgumentException();
         }
         byte[] asciiEncoded = AsciiE.encode(bytes);
-        System.out.println("encoded: " + Arrays.toString(asciiEncoded));
+        System.out.println(new String(asciiEncoded));
 
         int pixelCounts = asciiEncoded.length;
         while (pixelCounts % 3 != 0) {

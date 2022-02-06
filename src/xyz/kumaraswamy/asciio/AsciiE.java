@@ -16,6 +16,8 @@ class AsciiE {
         boolean base64Last = false;
 
         int copy = 0;
+
+        Integer lastL = null;
         for (byte ch : bytes) {
             if (ch > 0) {
                 encoded.write(ch);
@@ -28,8 +30,13 @@ class AsciiE {
                 if (base64Last) {
                     ints.get(ints.size() - 1)[1] += len;
                 } else {
-                    ints.add(new int[]{copy, len});
+                    int copyI = copy;
+                    if (lastL != null) {
+                        copyI = copyI - lastL;
+                    }
+                    ints.add(new int[]{copyI, len});
                     base64Last = true;
+                    lastL = copy;
                 }
                 copy = copy + len;
                 continue;
@@ -56,22 +63,29 @@ class AsciiE {
     }
 
     public static byte[] decode(byte[] bytes) throws IOException {
-        System.out.println(new String(bytes));
         int intL = -1, intR = -1;
 
         boolean sideL = true;
         ArrayList<int[]> ints = new ArrayList<>();
 
         int times = 0;
+
+        Integer lastL = null;
         for (byte byt : bytes) {
             times++;
             if (byt == '/' || byt == '&') {
+                int intLL = intL;
+                if (lastL != null) {
+                    intLL += lastL;
+                }
                 if (intL != -1 && intR != -1) {
-                    ints.add(new int[]{intL, intR});
+                    ints.add(new int[]{intLL, intR});
                 }
                 if (byt == '/') {
                     break;
                 }
+                lastL = intLL;
+
                 intL = -1;
                 intR = -1;
                 sideL = true;
